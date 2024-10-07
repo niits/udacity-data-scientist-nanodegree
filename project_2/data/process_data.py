@@ -16,8 +16,13 @@ def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
         pd.DataFrame: Merged DataFrame containing messages and categories.
     """
     messages_df = pd.read_csv(messages_filepath, index_col="id")
+    messages_df = messages_df.drop_duplicates()
+
+    # Drop rows with related value of 2
+    messages_df = messages_df[messages_df["related"] != 2].copy()
+
     categories_df = pd.read_csv(categories_filepath, index_col="id")
-    return messages_df.join(categories_df)
+    return messages_df.join(categories_df, how="inner")
 
 
 def extract_key_value(string_value: str) -> dict:
